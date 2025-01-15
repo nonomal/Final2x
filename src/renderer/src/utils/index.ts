@@ -1,17 +1,12 @@
+import { LANG_LIST } from '../plugins/i18n'
+
 class Utils {
   /**
-   * @description 返回当前环境语言
-   */
-  static getCurrentLocale(): string {
-    return navigator?.language?.split('-')[0] || 'en'
-  }
-
-  /**
    * @description 返回语言，和语言数量
-   * @param id 语言id 0-> en, 1-> zh, 2-> ja
+   * @param id 语言id 0-> en, 1-> zh, 2-> ja, 3-> fr
    */
   static getLanguage(id: number): { lang: string; numLang: number } {
-    const langs = ['en', 'zh', 'ja']
+    const langs = LANG_LIST
     return {
       lang: langs[id],
       numLang: langs.length
@@ -36,6 +31,41 @@ class Utils {
       /* empty */
     }
   }
+
+  /**
+   * @description 生成超长随机字符串
+   */
+  static getRandString(): string {
+    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+  }
+
+  /**
+   * @description: 防抖函数装饰器，防止用户频繁点击
+   * @param fn  需要防抖的函数
+   * @param delay 防抖的时间间隔，默认500ms
+   */
+  static clickDebounce(
+    fn: (...args: any[]) => void,
+    delay: number = 500
+  ): (...args: any[]) => void {
+    let timer: NodeJS.Timeout | null = null
+    let immediate = true
+
+    return (...args: any[]) => {
+      if (timer) {
+        clearTimeout(timer)
+      }
+
+      if (immediate) {
+        fn(...args)
+        immediate = false
+      }
+
+      timer = setTimeout(() => {
+        immediate = true
+      }, delay)
+    }
+  }
 }
 
-export const { getCurrentLocale, getLanguage, sleep, DeepDeepSleep } = Utils
+export const { getLanguage, sleep, DeepDeepSleep, getRandString, clickDebounce } = Utils

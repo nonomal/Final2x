@@ -1,18 +1,26 @@
 import { ref, Ref } from 'vue'
 import { defineStore } from 'pinia'
 import { LogInst } from 'naive-ui'
+import type { NaiveDarkModeType } from '../components/NaiveDarkMode.vue'
 
 export const useGlobalSettingsStore = defineStore(
   'GlobalSettings',
   () => {
+    const darkMode: Ref<NaiveDarkModeType> = ref('system')
     const globalcolor = ref('#fffafa')
-    const DarkTheme = ref(false)
+    const naiveTheme: Ref<any> = ref(undefined)
+
     const changeRoute = ref(false)
 
     const langsNum = ref(114514)
 
-    const SRgpuid = ref(114514)
-    const deviceList: Ref<any[]> = ref([])
+    const selectedTorchDevice = ref('auto')
+    const torchDeviceList: Ref<any[]> = ref([
+      { value: 'auto', label: 'Auto' },
+      { value: 'cuda', label: 'CUDA' },
+      { value: 'mps', label: 'MPS' },
+      { value: 'cpu', label: 'CPU' }
+    ])
 
     const ProgressPercentage = ref(0)
     const CommandLOG = ref('')
@@ -20,24 +28,35 @@ export const useGlobalSettingsStore = defineStore(
     const StartCommandLock = ref(false)
     const SrSuccess = ref(false)
 
+    const openOutputFolder = ref(true)
+
     return {
+      darkMode,
       globalcolor,
-      DarkTheme,
+      naiveTheme,
       changeRoute,
       langsNum,
-      SRgpuid,
-      deviceList,
+      selectedTorchDevice,
+      torchDeviceList,
       ProgressPercentage,
       CommandLOG,
       StartCommandLock,
       SrSuccess,
-      logInstRef
+      logInstRef,
+      openOutputFolder
     }
   },
   {
     persist: {
       storage: localStorage,
-      paths: ['langsNum', 'SRgpuid', 'DarkTheme', 'globalcolor', 'deviceList']
+      paths: [
+        'langsNum',
+        'selectedTorchDevice',
+        'darkMode',
+        'naiveTheme',
+        'globalcolor',
+        'openOutputFolder'
+      ]
     }
   }
 )

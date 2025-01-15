@@ -11,8 +11,14 @@ import ioPATH from '../utils/IOPath'
 const { t } = useI18n()
 const notification = useNotification()
 const dialog = useDialog()
-const { CommandLOG, logInstRef, StartCommandLock, SrSuccess, ProgressPercentage, deviceList } =
-  storeToRefs(useGlobalSettingsStore())
+const {
+  CommandLOG,
+  logInstRef,
+  StartCommandLock,
+  SrSuccess,
+  ProgressPercentage,
+  openOutputFolder
+} = storeToRefs(useGlobalSettingsStore())
 
 const showLOG = ref(false)
 
@@ -20,7 +26,7 @@ onMounted(() => {
   watchEffect(() => {
     if (CommandLOG.value) {
       nextTick(() => {
-        logInstRef.value?.scrollTo({ position: 'bottom', slient: true })
+        logInstRef.value?.scrollTo({ position: 'bottom', silent: true })
       })
     }
   })
@@ -120,11 +126,12 @@ function StartSR(): void {
 
   const command = getFinal2xconfig()
 
-  CommandLOG.value += '\n' + JSON.stringify(deviceList.value) + '\n' + command + '\n'
+  CommandLOG.value += '\n' + command + '\n'
+  CommandLOG.value += 'OPEN OUTPUT FOLDER: ' + openOutputFolder.value + '\n'
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  window.electron.ipcRenderer.send('execute-command', command)
+  window.electron.ipcRenderer.send('execute-command', command, openOutputFolder.value)
 }
 
 function TerminateSR(): void {
@@ -201,7 +208,7 @@ watchEffect(() => {
 .control {
   box-sizing: border-box;
   width: 100%;
-  padding: 12px 40px 0 40px;
+  padding: 30px 40px 0 40px;
   display: flex;
   justify-content: space-between;
 
@@ -225,6 +232,6 @@ watchEffect(() => {
 }
 
 .n-divider {
-  margin: 30px 0 0 0 !important;
+  margin: 10px 0 0 0 !important;
 }
 </style>

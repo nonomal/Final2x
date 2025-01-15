@@ -1,4 +1,4 @@
-name: CI-Test
+name: CI-test
 
 on:
   push:
@@ -14,10 +14,10 @@ on:
   workflow_dispatch:
 
 jobs:
-  CI-Test:
+  test:
     strategy:
       matrix:
-        os-version: [ "macos-latest", "windows-latest", "ubuntu-20.04" ]
+        os-version: ['macos-latest', 'windows-latest', 'ubuntu-20.04']
 
     runs-on: ${{ matrix.os-version }}
     steps:
@@ -29,15 +29,16 @@ jobs:
         with:
           node-version: 20
 
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
       - name: Test
         run: |
-          npm install
-          npm run lint
-          npm run test-cov
+          pnpm install
+          pnpm run lint
+          pnpm run typecheck
+          pnpm run test-cov
         env:
+          SKIP_DOWNLOAD_CORE: true
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-
-      - name: Codecov
-        uses: codecov/codecov-action@v3
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
